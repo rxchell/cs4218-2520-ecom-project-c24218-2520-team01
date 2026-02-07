@@ -3,6 +3,7 @@ import { render, fireEvent, waitFor } from "@testing-library/react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useAuth } from "../../context/auth";
+import { MOCK_USER, UPDATED_PROFILE_INPUT } from "../../../../test/fixtures/mockUser";
 import Profile from "./Profile";
 
 // Add a mock for axios
@@ -10,13 +11,13 @@ jest.mock("axios");
 
 // Add a stub for useAuth
 jest.mock("../../context/auth", () => ({
-    useAuth: jest.fn(),
+    useAuth: jest.fn()
 }));
 
 // Add a mock for React toast
 jest.mock("react-hot-toast", () => ({
     success: jest.fn(),
-    error: jest.fn(),
+    error: jest.fn()
 }));
 
 // Use a Fake for Layout
@@ -29,20 +30,13 @@ jest.mock("../../components/UserMenu", () => () => (
     <div>User Menu</div>
 ));
 
-const mockUserData = {
+const MOCK_AUTH = {
     user: {
-        name: "Tomm",
-        email: "tomm@example.com",
-        phone: "98345678",
-        address: "National Road",
+        name: MOCK_USER.name,
+        email: MOCK_USER.email,
+        phone: MOCK_USER.phone,
+        address: MOCK_USER.address
     }
-};
-
-const updatedUserData = {
-    name: "Tomm Doe",
-    email: "tomm@example.com",
-    phone: "98345991",
-    address: "Balin Lane",
 };
 
 describe("Unit test for Profile component", () => {
@@ -50,14 +44,15 @@ describe("Unit test for Profile component", () => {
     const setAuthMock = jest.fn();
 
     beforeEach(() => {
-        // Mock authenticated context and localStorage
         jest.clearAllMocks();
-        useAuth.mockReturnValue([mockUserData, setAuthMock]);
+        
+        // Mock authenticated context and localStorage
+        useAuth.mockReturnValue([MOCK_AUTH, setAuthMock]);
         localStorage.setItem(
             "auth",
             JSON.stringify({
-            user: mockUserData.user,
-            token: "example-token",
+                user: MOCK_AUTH.user,
+                token: "example-token"
             })
         );
     });
@@ -68,53 +63,49 @@ describe("Unit test for Profile component", () => {
         const { getByPlaceholderText } = render(<Profile />);
 
         // Assert
-        expect(getByPlaceholderText("Enter Your Name").value).toBe("Tomm");
-        expect(getByPlaceholderText("Enter Your Phone").value).toBe("98345678");
-        expect(getByPlaceholderText("Enter Your Address").value).toBe("National Road");
+        expect(getByPlaceholderText("Enter Your Name").value).toBe(MOCK_USER.name);
+        expect(getByPlaceholderText("Enter Your Phone").value).toBe(MOCK_USER.phone);
+        expect(getByPlaceholderText("Enter Your Address").value).toBe(MOCK_USER.address);
     });
 
 
-    test("Input changes by the user update local states", () => {
+    test("Input changes update local state", () => {
         // Arrange
         const { getByPlaceholderText } = render(<Profile />);
-
         const nameInput = getByPlaceholderText("Enter Your Name");
         const phoneInput = getByPlaceholderText("Enter Your Phone");
         const addressInput = getByPlaceholderText("Enter Your Address");
 
         // Act
-        fireEvent.change(nameInput, { target: { value: "Tomm Doe" } });
-        fireEvent.change(phoneInput, { target: { value: "98345991" } });
-        fireEvent.change(addressInput, { target: { value: "Balin Lane" } });
+        fireEvent.change(nameInput, { target: { value: UPDATED_PROFILE_INPUT.name } });
+        fireEvent.change(phoneInput, { target: { value: UPDATED_PROFILE_INPUT.phone } });
+        fireEvent.change(addressInput, { target: { value: UPDATED_PROFILE_INPUT.address } });
 
         // Assert
-        expect(nameInput.value).toBe("Tomm Doe");
-        expect(phoneInput.value).toBe("98345991");
-        expect(addressInput.value).toBe("Balin Lane");
+        expect(nameInput.value).toBe(UPDATED_PROFILE_INPUT.name);
+        expect(phoneInput.value).toBe(UPDATED_PROFILE_INPUT.phone);
+        expect(addressInput.value).toBe(UPDATED_PROFILE_INPUT.address);
     });
 
 
     test("Submitting the form calls the update Profile API", async () => {
         // Arrange
+        // Mock axios API call
         axios.put.mockResolvedValue({ 
-            data: { updatedUser: updatedUserData } 
+            data: { updatedUser: UPDATED_PROFILE_INPUT } 
         });
-
         const { getByText, getByPlaceholderText } = render(<Profile />);
 
         // Act
         fireEvent.change(getByPlaceholderText("Enter Your Name"), {
-            target: { value: "Tomm Doe" },
+            target: { value: UPDATED_PROFILE_INPUT.name }
         });
-
         fireEvent.change(getByPlaceholderText("Enter Your Phone"), {
-            target: { value: "98345991" },
+            target: { value: UPDATED_PROFILE_INPUT.phone }
         });
-
         fireEvent.change(getByPlaceholderText("Enter Your Address"), {
-            target: { value: "Balin Lane" },
+            target: { value: UPDATED_PROFILE_INPUT.address }
         });
-
         fireEvent.click(getByText("UPDATE"));
 
         // Assert
@@ -122,22 +113,21 @@ describe("Unit test for Profile component", () => {
             expect(axios.put).toHaveBeenCalledWith(
                 "/api/v1/auth/profile", 
                 expect.objectContaining({
-                    name: "Tomm Doe",
-                    phone: "98345991",
-                    address: "Balin Lane",
-                    password: "",
+                    name: UPDATED_PROFILE_INPUT.name,
+                    phone: UPDATED_PROFILE_INPUT.phone,
+                    address: UPDATED_PROFILE_INPUT.address,
+                    password: ""
                 })
             );
         });
     });
 
 
-    test("Successful profile update updates auth context and localStorage", async () => {
+    test("Successful profile updates across auth context and localStorage", async () => {
         // Arrange
         axios.put.mockResolvedValue({
-            data: { updatedUser: updatedUserData },
+            data: { updatedUser: UPDATED_PROFILE_INPUT }
         });
-
         const { getByText } = render(<Profile />);
 
         // Act
@@ -146,13 +136,11 @@ describe("Unit test for Profile component", () => {
         // Assert
         await waitFor(() => {
             expect(setAuthMock).toHaveBeenCalledWith({
-                ...mockUserData,
-                user: updatedUserData,
+                ...MOCK_AUTH,
+                user: UPDATED_PROFILE_INPUT
             });
-
             const storedAuth = JSON.parse(localStorage.getItem("auth"));
-            expect(storedAuth.user).toEqual(updatedUserData);
-
+            expect(storedAuth.user).toEqual(UPDATED_PROFILE_INPUT);
             expect(toast.success).toHaveBeenCalledWith(
                 "Profile Updated Successfully"
             );
@@ -162,7 +150,7 @@ describe("Unit test for Profile component", () => {
     test("Toast shows message for handleSubmit error", async () => {
         // Arrange
         axios.put.mockResolvedValue({
-            data: { error: "Invalid phone number" },
+            data: { error: "Invalid phone number" }
         });
         const { getByText } = render(<Profile />);
 
@@ -178,7 +166,6 @@ describe("Unit test for Profile component", () => {
     test("Toast shows error message for API error", async () => {
         // Arrange
         axios.put.mockRejectedValue(new Error("Network Error"));
-
         const { getByText } = render(<Profile />);
 
         // Act
