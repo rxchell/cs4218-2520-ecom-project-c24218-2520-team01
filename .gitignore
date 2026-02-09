@@ -5,3 +5,6 @@ node_modules
 /playwright/.cache/
 coverage/
 .env.local
+.scannerwork
+.vscode
+sonar-project.properties
