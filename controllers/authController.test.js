@@ -1,47 +1,79 @@
 import orderModel from "../models/orderModel.js";
 import { getOrdersController } from "../controllers/authController.js";
 
+jest.mock("../models/orderModel.js");
+
 describe("Tests for getOrdersController", () => {
 
     // Set up variables for our test cases
     let req, res;
 
-    // beforeEach(() => {
-    //     req = {
-    //         body: {},
-    //     };
-    //     res = {
-    //         status: jest.fn().mockReturnThis(),
-    //         send: jest.fn(),
-    //     };
-    //     jest.clearAllMocks();
-    // });
+    beforeEach(() => {
+        req = {};
+        res = {
+            json: jest.fn(),
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn(),
+        };
+        jest.clearAllMocks();
+    });
 
-    test("Create new category successfully and return 201", async () => {
-        // // Arrange
-        // req.body.name = "NewCategory";
+    test("Return 200 after fetching orders successfully", async () => {
+        /* 
+        Assumption: 
+        - getOrdersController should return a 200 once the orders has been retrieved successfully.
+        - MongoDB will return an emmpty buyer even if the object id for buyer does not exist.
+        */
+        // Arrange
+        req.user = { _id: "123" };
 
-        // // Mock categoryModel.findOne to return false
-        // categoryModel.findOne.mockResolvedValue(false);
-        // slugify.mockReturnValue("newcategory");
+        const mockOrders = [
+            { _id: "1", buyer: "user123", products: [], payment: {}, status: "Not Process" },
+            { _id: "2", buyer: "user123", products: [], payment: {}, status: "Shipped" },
+        ];
 
-        // // Mock categoryModel.save to return a new category object
-        // const savedCategory = { name: "NewCategory", slug: "newcategory" };
-        // categoryModel.mockImplementation(() => ({
-        //     save: jest.fn().mockResolvedValue(savedCategory)
-        // }));
+        const mockQuery = {
+            populate: jest.fn().mockReturnThis(),
+            then: function (resolve) {
+                resolve(mockOrders);
+            }
+        };
 
-        // // Act
-        // await createCategoryController(req, res);
+        orderModel.find.mockReturnValue(mockQuery);
 
-        // // Assert
-        // expect(categoryModel.findOne).toHaveBeenCalledWith({ name: "NewCategory" });
-        // expect(categoryModel).toHaveBeenCalledWith({ name: "NewCategory", slug: "newcategory" });
-        // expect(res.status).toHaveBeenCalledWith(201);
-        // expect(res.send).toHaveBeenCalledWith({
-        //     success: true,
-        //     message: "New category created",
-        //     category: savedCategory,
-        // });
+        // Act
+        await getOrdersController(req, res);
+
+        // Assert
+        expect(orderModel.find).toHaveBeenCalledWith({ buyer: "123" });
+        expect(mockQuery.populate).toHaveBeenCalledWith("products", "-photo");
+        expect(mockQuery.populate).toHaveBeenCalledWith("buyer", "name");
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith(mockOrders);
+    });
+
+    test("Return 500 when an error occurs while fetching orders", async () => {
+        /* 
+        Assumption: MongoDB will throw an error when the buyer id is invalid.
+        */
+        // Arrange
+        req.user = { _id: "123" };
+
+        const error = new Error("Database error");
+        orderModel.find.mockImplementation(() => {
+            throw error;
+        });
+
+        // Act
+        await getOrdersController(req, res);
+
+        // Assert
+        expect(orderModel.find).toHaveBeenCalledWith({ buyer: "123" });
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.send).toHaveBeenCalledWith({
+            success: false,
+            message: "Error while getting orders",
+            error,
+        });
     });
 });
