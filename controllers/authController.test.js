@@ -54,6 +54,20 @@ describe("Tests for getOrdersController", () => {
         expect(res.json).toHaveBeenCalledWith(mockOrders);
     });
 
+    test("Return 400 when user id is not provided", async () => {
+        // Arrange
+        req.user = { _id: null };
+
+        // Act
+        await getOrdersController(req, res);
+
+        // Assert
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.send).toHaveBeenCalledWith({
+            message: "User id is not provided",
+        });
+    });
+
     test("Return 500 when an error occurs while fetching orders", async () => {
         /* 
         Assumption: MongoDB will throw an error when the buyer id is invalid.

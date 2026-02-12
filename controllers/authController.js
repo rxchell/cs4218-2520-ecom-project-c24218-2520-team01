@@ -202,8 +202,12 @@ export const updateProfileController = async (req, res) => {
 //orders
 export const getOrdersController = async (req, res) => {
   try {
+    const id = req.user._id;
+    if (!id) {
+      return res.status(400).send({ message: "User id is not provided" });
+    }
     const orders = await orderModel
-      .find({ buyer: req.user._id })
+      .find({ buyer: id })
       .populate("products", "-photo")
       .populate("buyer", "name");
     res.status(200).json(orders);
