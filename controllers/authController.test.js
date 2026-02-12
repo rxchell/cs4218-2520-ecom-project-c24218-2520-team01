@@ -64,6 +64,9 @@ describe("Tests for getOrdersController", () => {
             throw error;
         });
 
+        // Console is a dependency so just mock it
+        console.log = jest.fn();
+
         // Act
         await getOrdersController(req, res);
 
@@ -135,6 +138,9 @@ describe("Tests for getAllOrdersController", () => {
         orderModel.find.mockImplementation(() => {
             throw error;
         });
+
+        // Console is a dependency so just mock it
+        console.log = jest.fn();
 
         // Act
         await getAllOrdersController(req, res);

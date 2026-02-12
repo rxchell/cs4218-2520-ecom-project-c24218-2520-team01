@@ -224,12 +224,12 @@ export const getAllOrdersController = async (req, res) => {
       .populate("products", "-photo")
       .populate("buyer", "name")
       .sort({ createdAt: "-1" });
-    res.json(orders);
+    res.status(200).json(orders);
   } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error WHile Geting Orders",
+      message: "Error while getting orders",
       error,
     });
   }
