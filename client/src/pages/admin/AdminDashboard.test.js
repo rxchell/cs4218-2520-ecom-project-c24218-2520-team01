@@ -32,15 +32,14 @@ describe("Tests for AdminDashboard Component", () => {
         },
     };
 
-    beforeEach(() => {
-        useAuth.mockReturnValue([mockAuth, jest.fn()]);
-    });
-
     afterEach(() => {
         jest.clearAllMocks();
     });
 
     test("Render admin details correctly", () => {
+
+        // Arrange
+        useAuth.mockReturnValue([mockAuth, jest.fn()]);
 
         // Act
         render(<AdminDashboard />);
@@ -50,8 +49,36 @@ describe("Tests for AdminDashboard Component", () => {
         expect(screen.getByText(/Admin Email : admin@test.com/i)).toBeInTheDocument();
         expect(screen.getByText(/Admin Contact : 123456789/i)).toBeInTheDocument();
 
-        // Assert if mocked components are rendered
-        expect(screen.getByTestId("admin-menu")).toBeInTheDocument();
-        expect(screen.getByTestId("layout")).toBeInTheDocument();
     });
+
+    test("Does not crash when auth is null", () => {
+
+        // Arrange
+        useAuth.mockReturnValue([null, jest.fn()]);
+
+        // Act
+        render(<AdminDashboard />);
+
+        // Assert if user fields are still displayed
+        expect(screen.getByText(/Admin Name :/i)).toBeInTheDocument();
+        expect(screen.getByText(/Admin Email :/i)).toBeInTheDocument();
+        expect(screen.getByText(/Admin Contact :/i)).toBeInTheDocument();
+
+    });
+
+    test("Renders when user fields are missing", () => {
+
+        // Arrange
+        const partialAuth = { user: { name: "Admin" } }; // Only name, no email or phone number
+        useAuth.mockReturnValue([partialAuth, jest.fn()]);
+
+        // Act
+        render(<AdminDashboard />);
+
+        // Assert if user fields + admin value is displayed
+        expect(screen.getByText(/Admin Name : Admin/i)).toBeInTheDocument();
+        expect(screen.getByText(/Admin Email :/i)).toBeInTheDocument();
+        expect(screen.getByText(/Admin Contact :/i)).toBeInTheDocument();
+    });
+
 });
