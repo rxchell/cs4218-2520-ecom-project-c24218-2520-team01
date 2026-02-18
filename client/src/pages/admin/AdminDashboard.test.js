@@ -22,7 +22,6 @@ jest.mock("./../../components/Layout", () => ({ children }) => (
 
 describe("Tests for AdminDashboard Component", () => {
 
-    // Arrange
     const mockAuth = {
         user: {
             name: "Admin",
