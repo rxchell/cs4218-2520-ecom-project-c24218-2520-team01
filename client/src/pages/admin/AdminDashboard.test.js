@@ -30,7 +30,7 @@ describe("Tests for AdminDashboard Component", () => {
         },
     };
 
-    afterEach(() => {
+    beforeEach(() => {
         jest.clearAllMocks();
     });
 
@@ -42,7 +42,7 @@ describe("Tests for AdminDashboard Component", () => {
         // Act
         render(<AdminDashboard />);
 
-        // Assert if user details are displayed
+        // Assert
         expect(screen.getByText(/Admin Name : Admin/i)).toBeInTheDocument();
         expect(screen.getByText(/Admin Email : admin@test.com/i)).toBeInTheDocument();
         expect(screen.getByText(/Admin Contact : 123456789/i)).toBeInTheDocument();
@@ -57,7 +57,7 @@ describe("Tests for AdminDashboard Component", () => {
         // Act
         render(<AdminDashboard />);
 
-        // Assert if user fields are still displayed
+        // Assert
         expect(screen.getByText(/Admin Name :/i)).toBeInTheDocument();
         expect(screen.getByText(/Admin Email :/i)).toBeInTheDocument();
         expect(screen.getByText(/Admin Contact :/i)).toBeInTheDocument();
@@ -73,7 +73,7 @@ describe("Tests for AdminDashboard Component", () => {
         // Act
         render(<AdminDashboard />);
 
-        // Assert if user fields + admin value is displayed
+        // Assert
         expect(screen.getByText(/Admin Name : Admin/i)).toBeInTheDocument();
         expect(screen.getByText(/Admin Email :/i)).toBeInTheDocument();
         expect(screen.getByText(/Admin Contact :/i)).toBeInTheDocument();
