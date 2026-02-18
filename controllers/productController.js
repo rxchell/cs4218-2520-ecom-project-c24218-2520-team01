@@ -19,7 +19,7 @@ var gateway = new braintree.BraintreeGateway({
 
 export const createProductController = async (req, res) => {
     try {
-        const { name, description, price, category, quantity, shipping } =
+        const { name, description, price, category, quantity, _shipping } =
             req.fields;
         const { photo } = req.files;
         // Validation
@@ -65,13 +65,13 @@ export const createProductController = async (req, res) => {
         res.status(500).send({
             success: false,
             error,
-            message: "Error in crearing product",
+            message: "Error in creating product",
         });
     }
 };
 
 //get all products
-export const getProductController = async (req, res) => {
+export const getProductController = async (_req, res) => {
     try {
         const products = await productModel
             .find({})
@@ -196,7 +196,7 @@ export const deleteProductController = async (req, res) => {
 export const updateProductController = async (req, res) => {
     try {
         const { pid } = req.params;
-        const { name, description, price, category, quantity, shipping } =
+        const { name, description, price, category, quantity, _shipping } =
             req.fields;
         const { photo } = req.files;
         // validation
@@ -253,10 +253,11 @@ export const updateProductController = async (req, res) => {
 // filters
 export const productFiltersController = async (req, res) => {
     try {
-        const { checked, radio } = req.body;
+        const { checked = [], radio = [] } = req.body;
         let args = {};
         if (checked.length > 0) args.category = checked;
         if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
+        console.log(args);
         const products = await productModel.find(args);
         res.status(200).send({
             success: true,
@@ -264,9 +265,9 @@ export const productFiltersController = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-        res.status(400).send({
+        res.status(500).send({
             success: false,
-            message: "Error WHile Filtering Products",
+            message: "Error while filtering products",
             error,
         });
     }
@@ -282,7 +283,7 @@ export const productCountController = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-        res.status(400).send({
+        res.status(500).send({
             message: "Error in product count",
             error,
             success: false,
@@ -307,7 +308,7 @@ export const productListController = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-        res.status(400).send({
+        res.status(500).send({
             success: false,
             message: "error in per page ctrl",
             error,
@@ -319,7 +320,7 @@ export const productListController = async (req, res) => {
 export const searchProductController = async (req, res) => {
     try {
         const { keyword } = req.params;
-        const resutls = await productModel
+        const results = await productModel
             .find({
                 $or: [
                     { name: { $regex: keyword, $options: "i" } },
@@ -327,7 +328,7 @@ export const searchProductController = async (req, res) => {
                 ],
             })
             .select("-photo");
-        res.json(resutls);
+        res.json(results);
     } catch (error) {
         console.log(error);
         res.status(400).send({
@@ -339,7 +340,7 @@ export const searchProductController = async (req, res) => {
 };
 
 // similar products
-export const realtedProductController = async (req, res) => {
+export const relatedProductController = async (req, res) => {
     try {
         const { pid, cid } = req.params;
         const products = await productModel
@@ -356,9 +357,9 @@ export const realtedProductController = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-        res.status(400).send({
+        res.status(500).send({
             success: false,
-            message: "error while geting related product",
+            message: "Error while getting related product",
             error,
         });
     }
@@ -378,10 +379,10 @@ export const productCategoryController = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-        res.status(400).send({
+        res.status(500).send({
             success: false,
             error,
-            message: "Error While Getting products",
+            message: "Error while getting products",
         });
     }
 };
