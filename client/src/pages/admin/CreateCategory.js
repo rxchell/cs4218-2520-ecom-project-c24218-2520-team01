@@ -65,7 +65,7 @@ const CreateCategory = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error("Something went wrong");
+      toast.error("Something went wrong in updating category");
     }
   };
   //delete category
@@ -82,7 +82,7 @@ const CreateCategory = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error("Something went wrong");
+      toast.error("Something went wrong in deleting category");
     }
   };
   return (
