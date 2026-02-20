@@ -199,17 +199,24 @@ export const updateProfileController = async (req, res) => {
   }
 };
 
+// From here onwards: Bugs fixed by Nicholas Cheng, A0269648H 
+
 //orders
 export const getOrdersController = async (req, res) => {
   try {
     const id = req.user._id;
+
     if (!id) {
-      return res.status(400).send({ message: "User id is not provided" });
+      return res.status(422).send({
+        success: false,
+        message: "User id cannot be empty"
+      });
     }
     const orders = await orderModel
       .find({ buyer: id })
       .populate("products", "-photo")
       .populate("buyer", "name");
+
     res.status(200).json(orders);
   } catch (error) {
     console.log(error);
@@ -220,6 +227,7 @@ export const getOrdersController = async (req, res) => {
     });
   }
 };
+
 //orders
 export const getAllOrdersController = async (req, res) => {
   try {
@@ -227,7 +235,8 @@ export const getAllOrdersController = async (req, res) => {
       .find({})
       .populate("products", "-photo")
       .populate("buyer", "name")
-      .sort({ createdAt: "-1" });
+      .sort({ createdAt: -1 });
+
     res.status(200).json(orders);
   } catch (error) {
     console.log(error);
@@ -245,10 +254,16 @@ export const orderStatusController = async (req, res) => {
     const { orderId } = req.params;
     const { status } = req.body;
     if (!orderId) {
-      return res.status(400).send({ message: "Order id is not provided" });
+      return res.status(422).send({
+        success: false,
+        message: "Order id is not provided"
+      });
     }
     if (!status) {
-      return res.status(400).send({ message: "Order status is not provided" });
+      return res.status(422).send({
+        success: false,
+        message: "New order status cannot be empty"
+      });
     }
     const orders = await orderModel.findByIdAndUpdate(
       orderId,
@@ -256,7 +271,10 @@ export const orderStatusController = async (req, res) => {
       { new: true, runValidators: true }
     );
     if (!orders) {
-      return res.status(404).send({ message: "Order id does not exist" });
+      return res.status(404).send({
+        success: false,
+        message: "Order id does not exist"
+      });
     }
     res.status(200).json(orders);
   } catch (error) {
