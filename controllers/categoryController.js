@@ -1,6 +1,8 @@
 import categoryModel from "../models/categoryModel.js";
 import slugify from "slugify";
 
+// For the whole file: Bugs fixed by Nicholas Cheng, A0269648H
+
 export const createCategoryController = async (req, res) => {
   try {
     const { name } = req.body;
