@@ -38,7 +38,7 @@ export const createCategoryController = async (req, res) => {
     res.status(500).send({
       success: false,
       error,
-      message: "Error in creating category",
+      message: "Error while creating category",
     });
   }
 };
@@ -87,7 +87,7 @@ export const updateCategoryController = async (req, res) => {
     res.status(500).send({
       success: false,
       error,
-      message: "Error in updating category",
+      message: "Error while updating category",
     });
   }
 };

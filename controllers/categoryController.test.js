@@ -2,7 +2,8 @@ import { afterEach, beforeEach, describe, expect, jest } from "@jest/globals";
 import categoryModel from "../models/categoryModel.js";
 import {
     createCategoryController,
-    updateCategoryController
+    updateCategoryController,
+    categoryController
 } from "./categoryController.js";
 import slugify from "slugify";
 
@@ -166,7 +167,7 @@ describe("Category CRUD operations", () => {
             });
         })
 
-        describe("Errors reguarding the database", () => {
+        describe("Errors regarding the database", () => {
             test("Return 500 when a database error occurs", async () => {
                 // Arrange
                 req.body.name = "Electronic";
@@ -186,7 +187,7 @@ describe("Category CRUD operations", () => {
                 expect(res.send).toHaveBeenCalledWith({
                     success: false,
                     error: mockError,
-                    message: "Error in creating category",
+                    message: "Error while creating category",
                 });
             });
         })
@@ -364,7 +365,7 @@ describe("Category CRUD operations", () => {
             });
         })
 
-        describe("Errors reguarding the database", () => {
+        describe("Errors regarding the database", () => {
             test("Return 500 when a database error occurs", async () => {
                 // Arrange
                 req.body.name = "Electronic";
@@ -394,9 +395,113 @@ describe("Category CRUD operations", () => {
                 expect(res.send).toHaveBeenCalledWith({
                     success: false,
                     error: mockError,
-                    message: "Error in updating category",
+                    message: "Error while updating category",
                 });
             });
         })
     });
+
+    describe("Unit tests for categoryController", () => {
+        // Set up variables for our test cases
+        let req, res, consoleSpy;
+
+        // Before each test case we reset our variables / mocks
+        beforeEach(() => {
+            req = {
+                params: {},
+                body: {},
+            };
+            res = {
+                status: jest.fn().mockReturnThis(),
+                send: jest.fn(),
+            };
+            // Spy instead of mock because we might want to log in between tests.
+            consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
+            jest.clearAllMocks();
+        });
+
+        afterEach(() => {
+            consoleSpy.mockRestore();
+        });
+
+        describe("Successfully fetch categoryies from the database", () => {
+            test("Return 200 and all the categories", async () => {
+                // Arrange
+                const mockCategoryList = [
+                    {
+                        _id: "1",
+                        name: "Electronic",
+                        slug: "electronic"
+                    },
+                    {
+                        _id: "2",
+                        name: "Clothing",
+                        slug: "clothing"
+                    }
+                ];
+
+                // Mock our dependencies & what they will return
+                categoryModel.find.mockResolvedValue(mockCategoryList);
+
+                // Act
+                await categoryController(req, res);
+
+                // Assert
+                expect(categoryModel.find).toHaveBeenCalledWith({});
+                expect(res.status).toHaveBeenCalledWith(200);
+                expect(res.send).toHaveBeenCalledWith({
+                    success: true,
+                    message: "All categories fetched",
+                    category: mockCategoryList,
+                });
+            });
+
+            test("Return 200 when there are no categories from the database", async () => {
+                /**
+                 * Assumption: Even if the database is empty,
+                 * we can still return an empty list of categories which still makes the
+                 * system be in a valid state.
+                 */
+                // Arrange
+                const mockCategoryList = [];
+
+                // Mock our dependencies & what they will return
+                categoryModel.find.mockResolvedValue(mockCategoryList);
+
+                // Act
+                await categoryController(req, res);
+
+                // Assert
+                expect(categoryModel.find).toHaveBeenCalledWith({});
+                expect(res.status).toHaveBeenCalledWith(200);
+                expect(res.send).toHaveBeenCalledWith({
+                    success: true,
+                    message: "All categories fetched",
+                    category: mockCategoryList,
+                });
+            });
+        })
+
+        describe("Errors regarding the database", () => {
+            test("Return 500 when a database error occurs", async () => {
+                // Arrange
+                categoryModel.find.mockImplementation(() => {
+                    throw mockError;
+                });
+
+                // Act
+                await categoryController(req, res);
+
+                // Assert
+                expect(categoryModel.find).toHaveBeenCalledWith({});
+                expect(consoleSpy).toHaveBeenCalledWith(mockError);
+                expect(res.status).toHaveBeenCalledWith(500);
+                expect(res.send).toHaveBeenCalledWith({
+                    success: false,
+                    error: mockError,
+                    message: "Error while fetching categories",
+                });
+            });
+        })
+    })
 })
