@@ -8,23 +8,24 @@ export const registerController = async (req, res) => {
 	try {
 		const { name, email, password, phone, address, answer } = req.body;
 		//validations
+		// Bug: Standardize the error response format to include success: false and message key
 		if (!name) {
-			return res.send({ error: "Name is required" });
+			return res.send({ success: false, message: "Name is required" });
 		}
 		if (!email) {
-			return res.send({ message: "Email is required" });
+			return res.send({ success: false, message: "Email is required" });
 		}
 		if (!password) {
-			return res.send({ message: "Password is required" });
+			return res.send({ success: false, message: "Password is required" });
 		}
 		if (!phone) {
-			return res.send({ message: "Phone number is required" });
+			return res.send({ success: false, message: "Phone number is required" });
 		}
 		if (!address) {
-			return res.send({ message: "Address is required" });
+			return res.send({ success: false, message: "Address is required" });
 		}
 		if (!answer) {
-			return res.send({ message: "Answer is required" });
+			return res.send({ success: false, message: "Answer is required" });
 		}
 		//check user
 		const existingUser = await userModel.findOne({ email });
@@ -83,7 +84,8 @@ export const loginController = async (req, res) => {
 		}
 		const match = await comparePassword(password, user.password);
 		if (!match) {
-			return res.status(200).send({
+			// Bug: Invalid password should return 401 Unauthorized, not 200 OK
+			return res.status(401).send({
 				success: false,
 				message: "Invalid password",
 			});
@@ -120,14 +122,21 @@ export const loginController = async (req, res) => {
 export const forgotPasswordController = async (req, res) => {
 	try {
 		const { email, answer, newPassword } = req.body;
+		// Bug: Added return statements to each validation check to prevent further execution after sending an error response
 		if (!email) {
-			res.status(400).send({ message: "Email is required" });
+			return res
+				.status(400)
+				.send({ success: false, message: "Email is required" });
 		}
 		if (!answer) {
-			res.status(400).send({ message: "Answer is required" });
+			return res
+				.status(400)
+				.send({ success: false, message: "Answer is required" });
 		}
 		if (!newPassword) {
-			res.status(400).send({ message: "New password is required" });
+			return res
+				.status(400)
+				.send({ success: false, message: "New password is required" });
 		}
 		//check
 		const user = await userModel.findOne({ email, answer });
@@ -154,7 +163,10 @@ export const forgotPasswordController = async (req, res) => {
 	}
 };
 
-//test controller
+// Debug controller — health check for the auth pipeline.
+// Route: GET /api/v1/auth/test → requireSignIn → isAdmin → testController
+// If can receive "Protected Routes", means both requireSignIn (JWT) and isAdmin middleware passed.
+// If either fails, an error will be returned before reaching here.
 export const testController = (req, res) => {
 	try {
 		res.send("Protected Routes");
@@ -169,9 +181,18 @@ export const updateProfileController = async (req, res) => {
 	try {
 		const { name, email, password, address, phone } = req.body;
 		const user = await userModel.findById(req.user._id);
-		//password
+		// Bug: Split password validation for clearer error messages
+		if (password.toString().trim() === "") {
+			return res.status(400).json({
+				success: false,
+				message: "Password is required",
+			});
+		}
 		if (password && password.length < 6) {
-			return res.json({ error: "Password is required and 6 characters long" });
+			return res.status(400).json({
+				success: false,
+				message: "Password must be at least 6 characters long",
+			});
 		}
 		const hashedPassword = password ? await hashPassword(password) : undefined;
 		const updatedUser = await userModel.findByIdAndUpdate(
@@ -219,6 +240,7 @@ export const getOrdersController = async (req, res) => {
 //orders
 export const getAllOrdersController = async (req, res) => {
 	try {
+		// Bug: Sort parameter should be number -1, not string "-1" (Integration Bug)
 		const orders = await orderModel
 			.find({})
 			.populate("products", "-photo")
