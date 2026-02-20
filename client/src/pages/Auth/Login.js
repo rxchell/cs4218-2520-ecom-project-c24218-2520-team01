@@ -6,10 +6,12 @@ import toast from "react-hot-toast";
 import "../../styles/AuthStyles.css";
 import { useAuth } from "../../context/auth";
 
+//Wong Sheen Kerr (A0269647J)
+
 const Login = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [auth, setAuth] = useAuth();
+	const [, setAuth] = useAuth(); // Removed Unused auth variable
 
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -32,7 +34,7 @@ const Login = () => {
 					},
 				});
 				setAuth({
-					...auth,
+					// Bug: Removed ...auth spread as we always set full auth upon login
 					user: res.data.user,
 					token: res.data.token,
 				});
