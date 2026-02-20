@@ -485,6 +485,7 @@ describe("Category CRUD operations", () => {
         describe("Errors regarding the database", () => {
             test("Return 500 when a database error occurs", async () => {
                 // Arrange
+                const mockError = new Error("Database error");
                 categoryModel.find.mockImplementation(() => {
                     throw mockError;
                 });
