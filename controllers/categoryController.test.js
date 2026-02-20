@@ -3,7 +3,8 @@ import categoryModel from "../models/categoryModel.js";
 import {
     createCategoryController,
     updateCategoryController,
-    categoryController
+    categoryController,
+    singleCategoryController
 } from "./categoryController.js";
 import slugify from "slugify";
 
@@ -91,6 +92,8 @@ describe("Category CRUD operations", () => {
                 await createCategoryController(req, res);
 
                 // Assert
+                // If findOne is called that means we did not exit the function
+                expect(categoryModel.findOne).toHaveBeenCalledTimes(0);
                 expect(res.status).toHaveBeenCalledWith(422);
                 expect(res.send).toHaveBeenCalledWith({
                     success: false,
@@ -110,6 +113,7 @@ describe("Category CRUD operations", () => {
                 await createCategoryController(req, res);
 
                 // Assert
+                expect(categoryModel.findOne).toHaveBeenCalledTimes(0);
                 expect(res.status).toHaveBeenCalledWith(422);
                 expect(res.send).toHaveBeenCalledWith({
                     success: false,
@@ -125,6 +129,7 @@ describe("Category CRUD operations", () => {
                 await createCategoryController(req, res);
 
                 // Assert
+                expect(categoryModel.findOne).toHaveBeenCalledTimes(0);
                 expect(res.status).toHaveBeenCalledWith(422);
                 expect(res.send).toHaveBeenCalledWith({
                     success: false,
@@ -268,6 +273,7 @@ describe("Category CRUD operations", () => {
                 await updateCategoryController(req, res);
 
                 // Assert
+                expect(categoryModel.findByIdAndUpdate).toHaveBeenCalledTimes(0);
                 expect(res.status).toHaveBeenCalledWith(422);
                 expect(res.send).toHaveBeenCalledWith({
                     success: false,
@@ -305,6 +311,7 @@ describe("Category CRUD operations", () => {
                 await updateCategoryController(req, res);
 
                 // Assert
+                expect(categoryModel.findByIdAndUpdate).toHaveBeenCalledTimes(0);
                 expect(res.status).toHaveBeenCalledWith(422);
                 expect(res.send).toHaveBeenCalledWith({
                     success: false,
@@ -326,6 +333,7 @@ describe("Category CRUD operations", () => {
                 await updateCategoryController(req, res);
 
                 // Assert
+                expect(categoryModel.findByIdAndUpdate).toHaveBeenCalledTimes(0);
                 expect(res.status).toHaveBeenCalledWith(422);
                 expect(res.send).toHaveBeenCalledWith({
                     success: false,
@@ -333,7 +341,7 @@ describe("Category CRUD operations", () => {
                 });
             });
 
-            test("Return 404 when category id is null", async () => {
+            test("Return 404 when category id cannot be found", async () => {
                 /**
                  * Assumption: Status 404 is ususally used when some resource cannot be found.
                  */
@@ -424,7 +432,7 @@ describe("Category CRUD operations", () => {
             consoleSpy.mockRestore();
         });
 
-        describe("Successfully fetch categoryies from the database", () => {
+        describe("Successfully fetch categories from the database", () => {
             test("Return 200 and all the categories", async () => {
                 // Arrange
                 const mockCategoryList = [
@@ -505,4 +513,120 @@ describe("Category CRUD operations", () => {
             });
         })
     })
-})
+
+    describe("Unit tests for singleCategoryController", () => {
+        // Set up variables for our test cases
+        let req, res, consoleSpy;
+
+        // Before each test case we reset our variables / mocks
+        beforeEach(() => {
+            req = {
+                params: {},
+                body: {},
+            };
+            res = {
+                status: jest.fn().mockReturnThis(),
+                send: jest.fn(),
+            };
+            // Spy instead of mock because we might want to log in between tests.
+            consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
+            jest.clearAllMocks();
+        });
+
+        afterEach(() => {
+            consoleSpy.mockRestore();
+        });
+
+        describe("Successfully fetch a single category from the database", () => {
+            test("Return 200 when the fetch is successful", async () => {
+                // Arrange
+                req.params.slug = "clothing";
+                // Mimic a sample return object from mongoose
+                const mockCategoryObject = {
+                    _id: "1",
+                    name: "Clothing",
+                    slug: "clothing"
+                };
+
+                // Mock our dependencies & what they will return
+                categoryModel.findOne.mockResolvedValue(mockCategoryObject);
+
+                // Act
+                await singleCategoryController(req, res);
+
+                // Assert
+                expect(categoryModel.findOne).toHaveBeenCalledWith({ slug: "clothing" });
+                expect(res.status).toHaveBeenCalledWith(200);
+                expect(res.send).toHaveBeenCalledWith({
+                    success: true,
+                    message: "Get single category successfully",
+                    category: mockCategoryObject,
+                });
+            });
+        })
+
+        describe("Validation error when fetching a single category", () => {
+            test("Return 404 when category with slug value cannot be found", async () => {
+                /**
+                 * Assumption: Return a 404 to alert the user that the category cannot be found.
+                 * This will have the same effect as if the slug value is a empty string.
+                 */
+                // Arrange
+                req.params.slug = "medicine";
+
+                categoryModel.findOne.mockResolvedValue(null);
+
+                // Act
+                await singleCategoryController(req, res);
+
+                // Assert
+                expect(categoryModel.findOne).toHaveBeenCalledWith({ slug: "medicine" });
+                expect(res.status).toHaveBeenCalledWith(404);
+                expect(res.send).toHaveBeenCalledWith({
+                    success: false,
+                    message: "No category found",
+                });
+            });
+
+            test("Return 422 when slug value is empty", async () => {
+                // Arrange
+                req.params.slug = null;
+
+                // Act
+                await singleCategoryController(req, res);
+
+                // Assert
+                expect(categoryModel.findOne).toHaveBeenCalledTimes(0);
+                expect(res.status).toHaveBeenCalledWith(422);
+                expect(res.send).toHaveBeenCalledWith({
+                    success: false,
+                    message: "Slug cannot be empty",
+                });
+            });
+        })
+
+        describe("Errors regarding the database", () => {
+            test("Return 500 when a database error occurs", async () => {
+                // Arrange
+                req.params.slug = "toys";
+                const mockError = new Error("Database error");
+                categoryModel.findOne.mockImplementation(() => {
+                    throw mockError;
+                });
+
+                // Act
+                await singleCategoryController(req, res);
+
+                // Assert
+                expect(categoryModel.findOne).toHaveBeenCalledWith({ slug: "toys" });
+                expect(consoleSpy).toHaveBeenCalledWith(mockError);
+                expect(res.status).toHaveBeenCalledWith(500);
+                expect(res.send).toHaveBeenCalledWith({
+                    success: false,
+                    error: mockError,
+                    message: "Error while fetching single category",
+                });
+            });
+        })
+    })
+});
