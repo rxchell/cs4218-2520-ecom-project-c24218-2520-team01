@@ -11,7 +11,12 @@ export const requireSignIn = async (req, res, next) => {
 		req.user = decode;
 		next();
 	} catch (error) {
+		// Bug: Added 401 response, previously sent no response
 		console.log(error);
+		res.status(401).send({
+			success: false,
+			message: "Unauthorized",
+		});
 	}
 };
 
