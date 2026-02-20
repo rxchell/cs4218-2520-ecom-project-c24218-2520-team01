@@ -600,7 +600,7 @@ describe("Category CRUD operations", () => {
                 expect(res.status).toHaveBeenCalledWith(422);
                 expect(res.send).toHaveBeenCalledWith({
                     success: false,
-                    message: "Slug cannot be empty",
+                    message: "Category slug cannot be empty",
                 });
             });
         })

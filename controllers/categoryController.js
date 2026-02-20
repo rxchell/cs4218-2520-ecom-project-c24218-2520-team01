@@ -114,10 +114,27 @@ export const categoryController = async (req, res) => {
 // single category
 export const singleCategoryController = async (req, res) => {
   try {
-    const category = await categoryModel.findOne({ slug: req.params.slug });
+    const { slug } = req.params;
+
+    if (!slug) {
+      return res.status(422).send({
+        success: false,
+        message: "Category slug cannot be empty"
+      });
+    }
+
+    const category = await categoryModel.findOne({ slug });
+
+    if (!category) {
+      return res.status(404).send({
+        success: false,
+        message: "No category found"
+      });
+    }
+
     res.status(200).send({
       success: true,
-      message: "Get SIngle Category SUccessfully",
+      message: "Get single category successfully",
       category,
     });
   } catch (error) {
@@ -125,7 +142,7 @@ export const singleCategoryController = async (req, res) => {
     res.status(500).send({
       success: false,
       error,
-      message: "Error While getting Single Category",
+      message: "Error while fetching single category",
     });
   }
 };
