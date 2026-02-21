@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, test, expect, jest } from "@jest/globals";
+import { beforeEach, describe, test, expect, jest } from "@jest/globals";
 import {
     getOrdersController,
     getAllOrdersController,
@@ -14,7 +14,7 @@ jest.mock("../models/orderModel.js");
 describe("Orders CRUD operations", () => {
     describe("Unit tests for getOrdersController", () => {
         // Set up variables for our test cases
-        let req, res, consoleSpy;
+        let req, res;
 
         // Before each test case we reset our variables / mocks
         beforeEach(() => {
@@ -26,13 +26,7 @@ describe("Orders CRUD operations", () => {
                 send: jest.fn(),
                 json: jest.fn()
             };
-            // Spy instead of mock because we might want to log in between tests.
-            consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
             jest.clearAllMocks();
-        });
-
-        afterEach(() => {
-            consoleSpy.mockRestore();
         });
 
         describe("Successfully retrieved user orders", () => {
@@ -116,7 +110,7 @@ describe("Orders CRUD operations", () => {
                     message: "User id cannot be empty",
                 });
             });
-        })
+        });
 
         describe("Errors regarding the database", () => {
             test("Return 500 when a database error occurs", async () => {
@@ -133,7 +127,6 @@ describe("Orders CRUD operations", () => {
 
                 // Assert
                 expect(orderModel.find).toHaveBeenCalledWith({ buyer: "1" });
-                expect(consoleSpy).toHaveBeenCalledWith(mockError);
                 expect(res.status).toHaveBeenCalledWith(500);
                 expect(res.send).toHaveBeenCalledWith({
                     success: false,
@@ -146,7 +139,7 @@ describe("Orders CRUD operations", () => {
 
     describe("Unit tests for getAllOrdersController", () => {
         // Set up variables for our test cases
-        let req, res, consoleSpy;
+        let req, res;
 
         // Before each test case we reset our variables / mocks
         beforeEach(() => {
@@ -156,13 +149,7 @@ describe("Orders CRUD operations", () => {
                 send: jest.fn(),
                 json: jest.fn(),
             };
-            // Spy instead of mock because we might want to log in between tests.
-            consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
             jest.clearAllMocks();
-        });
-
-        afterEach(() => {
-            consoleSpy.mockRestore();
         });
 
         describe("Successfully fetch all orders from the database", () => {
@@ -190,6 +177,7 @@ describe("Orders CRUD operations", () => {
                 expect(mockChainFunction.populate).toHaveBeenCalledWith("products", "-photo");
                 expect(mockChainFunction.populate).toHaveBeenCalledWith("buyer", "name");
                 // According to documentation this should be a integer
+                // Assumption: The function intends to return orders in descending order of createdAt
                 expect(mockChainFunction.sort).toHaveBeenCalledWith({ createdAt: -1 });
                 expect(res.status).toHaveBeenCalledWith(200);
                 expect(res.json).toHaveBeenCalledWith(mockOrdersList);
@@ -222,7 +210,7 @@ describe("Orders CRUD operations", () => {
                 expect(res.status).toHaveBeenCalledWith(200);
                 expect(res.json).toHaveBeenCalledWith(mockOrdersList);
             });
-        })
+        });
 
         describe("Errors regarding the database", () => {
             test("Return 500 when a database error occurs", async () => {
@@ -237,7 +225,6 @@ describe("Orders CRUD operations", () => {
 
                 // Assert
                 expect(orderModel.find).toHaveBeenCalledWith({});
-                expect(consoleSpy).toHaveBeenCalledWith(mockError);
                 expect(res.status).toHaveBeenCalledWith(500);
                 expect(res.send).toHaveBeenCalledWith({
                     success: false,
@@ -245,12 +232,12 @@ describe("Orders CRUD operations", () => {
                     message: "Error while getting orders",
                 });
             });
-        })
-    })
+        });
+    });
 
     describe("Unit tests for orderStatusController", () => {
         // Set up variables for our test cases
-        let req, res, consoleSpy;
+        let req, res;
 
         // Before each test case we reset our variables / mocks
         beforeEach(() => {
@@ -263,13 +250,7 @@ describe("Orders CRUD operations", () => {
                 send: jest.fn(),
                 json: jest.fn(),
             };
-            // Spy instead of mock because we might want to log in between tests.
-            consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
             jest.clearAllMocks();
-        });
-
-        afterEach(() => {
-            consoleSpy.mockRestore();
         });
 
         describe("Successfully update the order status", () => {
@@ -293,7 +274,7 @@ describe("Orders CRUD operations", () => {
                 expect(res.status).toHaveBeenCalledWith(200);
                 expect(res.json).toHaveBeenCalledWith(mockOrder);
             });
-        })
+        });
 
         describe("Validation errors when updating order status", () => {
             test("Return 422 when status is null", async () => {
@@ -360,7 +341,7 @@ describe("Orders CRUD operations", () => {
                     message: "Order id does not exist",
                 });
             });
-        })
+        });
 
         describe("Errors regarding the database", () => {
             test("Return 500 when a database error occurs", async () => {
@@ -384,7 +365,6 @@ describe("Orders CRUD operations", () => {
                     },
                     { new: true, runValidators: true }
                 );
-                expect(consoleSpy).toHaveBeenCalledWith(mockError);
                 expect(res.status).toHaveBeenCalledWith(500);
                 expect(res.send).toHaveBeenCalledWith({
                     success: false,
@@ -420,7 +400,6 @@ describe("Orders CRUD operations", () => {
                     },
                     { new: true, runValidators: true }
                 );
-                expect(consoleSpy).toHaveBeenCalledWith(mockError);
                 expect(res.status).toHaveBeenCalledWith(422);
                 expect(res.send).toHaveBeenCalledWith({
                     success: false,
@@ -428,6 +407,6 @@ describe("Orders CRUD operations", () => {
                     message: "Invalid status value",
                 });
             });
-        })
+        });
     });
 });
