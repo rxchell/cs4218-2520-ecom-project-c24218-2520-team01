@@ -7,7 +7,7 @@ import Spinner from "../Spinner";
 
 export default function PrivateRoute() {
 	const [ok, setOk] = useState(false);
-	const [auth] = useAuth(); // Removed unused setter setAuth 
+	const [auth] = useAuth(); // Removed unused setter setAuth
 
 	useEffect(() => {
 		const authCheck = async () => {
@@ -26,5 +26,5 @@ export default function PrivateRoute() {
 		if (auth?.token) authCheck();
 	}, [auth?.token]);
 
-	return ok ? <Outlet /> : <Spinner path="" />;
+	return ok ? <Outlet /> : <Spinner />;
 }

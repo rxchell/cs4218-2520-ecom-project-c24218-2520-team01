@@ -26,6 +26,5 @@ export default function AdminRoute() {
 		if (auth?.token) authCheck();
 	}, [auth?.token]);
 
-	// Bug: Added path="" prop to Spinner previously had no path prop, defaulting to "login" which was inconsistent with Private.js
-	return ok ? <Outlet /> : <Spinner path="" />;
+	return ok ? <Outlet /> : <Spinner />;
 }
