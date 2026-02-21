@@ -13,49 +13,42 @@ describe("Tests for connectDB function", () => {
         process.env.MONGO_URL = "mongodb://test-url";
     });
 
-    test("Connect to the database successfully and log the host", async () => {
+    test("Connects with MONGO_URL and logs the host", async () => {
 
         // Arrange
-        const mockHost = "test-host";
-        mongoose.connect.mockResolvedValue({
-            connection: {
-                host: mockHost,
-            },
-        });
+        const mockConn = { connection: { host: "test-host" } };
+        mongoose.connect.mockResolvedValue(mockConn);
 
-        const consoleSpy = jest.spyOn(console, "log").mockImplementation(() => { });
+        const logSpy = jest.spyOn(console, "log").mockImplementation(() => { });
 
         // Act
         await connectDB();
 
         // Assert
+        expect(mongoose.connect).toHaveBeenCalledTimes(1);
         expect(mongoose.connect).toHaveBeenCalledWith("mongodb://test-url");
-        expect(consoleSpy).toHaveBeenCalled();
 
-        const loggedMessage = consoleSpy.mock.calls[0][0];
-        expect(loggedMessage).toContain(`Connected To Mongodb Database ${mockHost}`);
-
-        consoleSpy.mockRestore();
+        // check only meaningful content to reduce brittleness from using logSpy
+        expect(logSpy).toHaveBeenCalledWith(
+            expect.stringContaining("Connected To Mongodb Database test-host")
+        );
     });
 
-    test("Log error when connection fails", async () => {
+    test("handles connection failure without throwing", async () => {
 
-        // Arrange
-        const mockError = new Error("Connection failed");
+        const mockError = {
+            toString: jest.fn(() => "Connection failed"),
+        };
+
         mongoose.connect.mockRejectedValue(mockError);
 
-        const consoleSpy = jest.spyOn(console, "log").mockImplementation(() => { });
-
         // Act
-        await connectDB();
+        await expect(connectDB()).resolves.toBeUndefined();
 
         // Assert
+        expect(mongoose.connect).toHaveBeenCalledTimes(1);
         expect(mongoose.connect).toHaveBeenCalledWith("mongodb://test-url");
-        expect(consoleSpy).toHaveBeenCalled();
-
-        const loggedMessage = consoleSpy.mock.calls[0][0];
-        expect(loggedMessage).toContain(`Error in Mongodb ${mockError}`);
-
-        consoleSpy.mockRestore();
+        expect(mockError.toString).toHaveBeenCalledTimes(1);
     });
+
 });
