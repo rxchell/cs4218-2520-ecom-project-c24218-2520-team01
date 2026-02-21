@@ -71,7 +71,6 @@ const UpdateProduct = () => {
       productData.append("quantity", quantity);
       photo && productData.append("photo", photo);
       productData.append("category", category);
-      productData.append("category", category);
       productData.append("shipping", shipping);
 
       const { data } = await axios.put(
