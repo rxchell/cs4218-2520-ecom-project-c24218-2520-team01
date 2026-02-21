@@ -279,6 +279,13 @@ export const orderStatusController = async (req, res) => {
     res.status(200).json(orders);
   } catch (error) {
     console.log(error);
+    if (error.name == "ValidationError") {
+      return res.status(422).send({
+        success: false,
+        message: "Invalid status value",
+        error,
+      });
+    }
     res.status(500).send({
       success: false,
       message: "Error while updating order status",

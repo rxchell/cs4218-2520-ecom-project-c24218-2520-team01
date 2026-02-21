@@ -393,7 +393,7 @@ describe("Orders CRUD operations", () => {
                 });
             });
 
-            test("Return 500 when the validators fail", async () => {
+            test("Return 422 when the validators fail", async () => {
                 /**
                  * Assuption: According to mongoose documentation, when the vallidators fail
                  * Mongoose will throw an error. So empty status, invalid status, etc. will be caught here.
@@ -402,6 +402,8 @@ describe("Orders CRUD operations", () => {
                 req.body.status = "Random Status";
                 req.params.orderId = "1";
                 const mockError = new Error("Validation error");
+                // Mongoose validation error name which can be used to identify the type of error
+                mockError.name = "ValidationError";
 
                 orderModel.findByIdAndUpdate.mockImplementation(() => {
                     throw mockError;
@@ -419,11 +421,11 @@ describe("Orders CRUD operations", () => {
                     { new: true, runValidators: true }
                 );
                 expect(consoleSpy).toHaveBeenCalledWith(mockError);
-                expect(res.status).toHaveBeenCalledWith(500);
+                expect(res.status).toHaveBeenCalledWith(422);
                 expect(res.send).toHaveBeenCalledWith({
                     success: false,
                     error: mockError,
-                    message: "Error while updating order status",
+                    message: "Invalid status value",
                 });
             });
         })
