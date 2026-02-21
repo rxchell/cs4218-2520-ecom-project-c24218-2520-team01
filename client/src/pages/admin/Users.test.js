@@ -56,7 +56,7 @@ describe("Tests for Users page", () => {
         });
     });
 
-    test("all-users API returns users", async () => {
+    test("get all users API returns users", async () => {
 
         // Arrange
         axios.get.mockResolvedValueOnce({ data: { users: [] } });
@@ -69,6 +69,29 @@ describe("Tests for Users page", () => {
             expect(axios.get).toHaveBeenCalledTimes(1);
             expect(axios.get).toHaveBeenCalledWith("/api/v1/user/all-users");
         });
+    });
+
+    test("handles get all users API fails", async () => {
+
+        // Arrange
+        axios.get.mockRejectedValueOnce(new Error("network Error"));
+
+        const consoleSpy = jest.spyOn(console, "log").mockImplementation(() => { });
+
+        // Act
+        render(<Users />);
+
+        // Assert
+        await waitFor(() => {
+            expect(screen.queryByText(/loading\.\.\./i)).not.toBeInTheDocument();
+        });
+
+        expect(axios.get).toHaveBeenCalledTimes(1);
+        expect(axios.get).toHaveBeenCalledWith("/api/v1/user/all-users");
+
+        expect(consoleSpy).toHaveBeenCalledWith(new Error("network Error"));
+
+        consoleSpy.mockRestore();
     });
 
     test("renders user details returned from API", async () => {
@@ -119,7 +142,7 @@ describe("Tests for Users page", () => {
         // Arrange
         const mockUsers = [
             {
-                _id: "u1",
+                _id: "user1",
                 name: "name1",
                 email: "name1@test.com" // No Role
             },

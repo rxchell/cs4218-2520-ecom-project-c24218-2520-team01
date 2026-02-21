@@ -1,5 +1,5 @@
 import userModel from "../models/userModel.js";
-import { getUsersController } from "./userController.js";
+import { getUsersController } from "./authController.js";
 
 // Lim Jia Wei, A0277381W
 
@@ -10,6 +10,19 @@ describe("Tests for getUsersController", () => {
 
     let request;
     let response;
+
+    const mockUsers = [
+        {
+            name: "admin",
+            email: "admin@test.com",
+            phone: "123456789",
+        },
+        {
+            name: "user",
+            email: "user@test.com",
+            phone: "123456789",
+        },
+    ];
 
     beforeEach(() => {
         request = {};
@@ -23,22 +36,9 @@ describe("Tests for getUsersController", () => {
         jest.clearAllMocks();
     });
 
-    test("Return 200 after fetching users successfully", async () => {
+    test("returns 200 after fetching users successfully", async () => {
 
         // Arrange
-        const mockUsers = [
-            {
-                name: "admin",
-                email: "admin@test.com",
-                phone: "123456789",
-            },
-            {
-                name: "user",
-                email: "user@test.com",
-                phone: "123456789",
-            },
-        ];
-
         userModel.find.mockResolvedValue(mockUsers);
 
         // Act
@@ -55,22 +55,9 @@ describe("Tests for getUsersController", () => {
 
     });
 
-    test("Return 500 after fetching users failed", async () => {
+    test("returns 500 after fetching users failed", async () => {
 
         // Arrange
-        const mockUsers = [
-            {
-                name: "admin",
-                email: "admin@test.com",
-                phone: "123456789",
-            },
-            {
-                name: "user",
-                email: "user@test.com",
-                phone: "123456789",
-            },
-        ];
-
         userModel.find.mockRejectedValue(mockUsers);
 
         // Act
@@ -87,7 +74,7 @@ describe("Tests for getUsersController", () => {
 
     });
 
-    test("Return 200 when no users exist", async () => {
+    test("returns 200 when no users exist", async () => {
 
         // Arrange
         const mockUsers = [];

@@ -21,7 +21,7 @@ jest.mock("./../../components/Layout", () => ({ children }) => (
     <div data-testid="layout">{children}</div>
 ));
 
-describe("Tests for AdminDashboard Component", () => {
+describe("Tests for Admin Dashboard page", () => {
 
     const mockAuth = {
         user: {
@@ -35,7 +35,7 @@ describe("Tests for AdminDashboard Component", () => {
         jest.clearAllMocks();
     });
 
-    test("Render admin details correctly", () => {
+    test("render admin details", () => {
 
         // Arrange
         useAuth.mockReturnValue([mockAuth, jest.fn()]);
@@ -50,7 +50,7 @@ describe("Tests for AdminDashboard Component", () => {
 
     });
 
-    test("Does not crash when auth is null", () => {
+    test("does not crash when auth is null", () => {
 
         // Arrange
         useAuth.mockReturnValue([null, jest.fn()]);
@@ -65,7 +65,7 @@ describe("Tests for AdminDashboard Component", () => {
 
     });
 
-    test("Renders when admin email and phone number are missing", () => {
+    test("renders when admin email and phone number are missing", () => {
 
         // Arrange
         const partialAuth = { user: { name: "Admin" } }; // Only name, no email or phone number
