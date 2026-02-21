@@ -47,6 +47,8 @@ const UpdateProduct = () => {
       const { data } = await axios.get("/api/v1/category/get-category");
       if (data?.success) {
         setCategories(data?.category);
+      } else {
+        toast.error("Categories could not be loaded");
       }
     } catch (error) {
       console.log(error);
@@ -69,13 +71,17 @@ const UpdateProduct = () => {
       productData.append("quantity", quantity);
       photo && productData.append("photo", photo);
       productData.append("category", category);
+      productData.append("category", category);
+      productData.append("shipping", shipping);
+
       const { data } = await axios.put(
         `/api/v1/product/update-product/${id}`,
         productData
       );
       if (data?.success) {
         toast.success("Product Updated Successfully");
-        navigate("/dashboard/admin/products");
+        //navigate("/dashboard/admin/products");
+        setTimeout(() => navigate("/dashboard/admin/products"), 800);
       } else {
         toast.error(data?.message);
       }
@@ -207,10 +213,10 @@ const UpdateProduct = () => {
                   onChange={(value) => {
                     setShipping(value);
                   }}
-                  value={shipping ? "yes" : "No"}
+                  value={shipping ? "1" : "0"}
                 >
-                  <Option value="0">No</Option>
                   <Option value="1">Yes</Option>
+                  <Option value="0">No</Option>
                 </Select>
               </div>
               <div className="mb-3">
