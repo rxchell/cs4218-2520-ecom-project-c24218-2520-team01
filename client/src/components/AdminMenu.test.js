@@ -14,7 +14,7 @@ const renderMenu = (initialPath = "/") =>
         </MemoryRouter>
     );
 
-describe("Tests for AdminMenu", () => {
+describe("Tests for Admin Menu component", () => {
 
     test("renders Admin Panel title", () => {
 
