@@ -171,7 +171,7 @@ describe("Tests for Create Product page", () => {
         });
     });
 
-    test("shows error toast when product create API fails", async () => {
+    test("shows error toast when create product API fails", async () => {
 
         // Arrange
         setupDataMocks();
@@ -194,7 +194,7 @@ describe("Tests for Create Product page", () => {
         });
     });
 
-    test("shows error toast when product create API gives no response", async () => {
+    test("shows error toast when create product API gives no response", async () => {
 
         // Arrange
         setupDataMocks();
@@ -211,6 +211,25 @@ describe("Tests for Create Product page", () => {
         await waitFor(() => {
             expect(toast.error).toHaveBeenCalledWith("Something went wrong");
             expect(mockNavigate).not.toHaveBeenCalled();
+        });
+    });
+
+    test("shows error toast when get category API fails", async () => {
+
+        // Arrange
+        setupDataMocks();
+
+        axios.get.mockResolvedValue({
+            data: { success: false, message: "Something went wrong" },
+        });
+
+        // Act
+        render(<CreateProduct />);
+
+        // Assert
+        await waitFor(() => {
+            expect(axios.get).toHaveBeenCalledWith("/api/v1/category/get-category");
+            expect(toast.error).toHaveBeenCalledWith("Categories could not be loaded");
         });
     });
 
