@@ -46,7 +46,30 @@ jest.mock("../../components/Form/CategoryForm", () => {
     };
 });
 
-// Mock antd Select - This mock was generated with assistance by ChatGPT 5.2
+/**
+ * AI Usage Declaration
+ *
+ * Tool Used: ChatGPT 5.2
+ *
+ * Prompt: How do I mock this select component from antd and the option component with it?
+ * 
+ * <Select
+                          bordered={false}
+                          onChange={(value) => handleChange(o._id, value)}
+                          defaultValue={o?.status}
+                        >
+                          {status.map((s, i) => (
+                            <Option key={i} value={s}>
+                              {s}
+                            </Option>
+                          ))}
+                        </Select>
+ *
+ * How the AI Output Was Used:
+ * - Used the AI output as a reference to create the antd Select mock as seen below
+*/
+
+// Mock antd Select
 jest.mock("antd", () => {
     const React = require("react");
     const Modal = ({ visible, onCancel, children }) => {

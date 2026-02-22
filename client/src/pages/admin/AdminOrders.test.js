@@ -44,7 +44,30 @@ jest.mock("moment", () =>
     }))
 );
 
-// Mock antd Select - This mock was generated with assistance by ChatGPT 5.2
+/**
+ * AI Usage Declaration
+ *
+ * Tool Used: ChatGPT 5.2
+ *
+ * Prompt: How do I mock this select component from antd and the option component with it?
+ * 
+ * <Select
+                          bordered={false}
+                          onChange={(value) => handleChange(o._id, value)}
+                          defaultValue={o?.status}
+                        >
+                          {status.map((s, i) => (
+                            <Option key={i} value={s}>
+                              {s}
+                            </Option>
+                          ))}
+                        </Select>
+ *
+ * How the AI Output Was Used:
+ * - Used the AI output as a reference to create the antd Select mock as seen below
+*/
+
+// Mock antd Select
 jest.mock("antd", () => {
     const React = require("react");
     const Select = ({ placeholder, onChange, children, defaultValue }) => (
@@ -148,7 +171,18 @@ describe("Tests for Admin Orders page", () => {
             expect(screen.getByText("Amos")).toBeInTheDocument();
         });
 
-        // combobox is input that allows selection from a list of options - Generated with assistance from ChatGPT 5.2
+        /**
+         * AI Usage Declaration
+         *
+         * Tool Used: ChatGPT 5.2
+         *
+         * Prompt: How do I screen grab the element from the rendered react component with a list of options?
+         *
+         * How the AI Output Was Used:
+         * - Used some of the AI output as reference to screen grab the combobox element as seen below
+         */
+
+        // combobox is input that allows selection from a list of options
         const selects = screen.getAllByRole("combobox");
         fireEvent.change(selects[0], { target: { value: "Shipped" } });
 
@@ -178,7 +212,18 @@ describe("Tests for Admin Orders page", () => {
             expect(screen.getByText("Amos")).toBeInTheDocument();
         });
 
-        // combobox is input that allows selection from a list of options - Generated with assistance from ChatGPT 5.2
+        /**
+         * AI Usage Declaration
+         *
+         * Tool Used: ChatGPT 5.2
+         *
+         * Prompt: How do I screen grab the element from the rendered react component with a list of options?
+         *
+         * How the AI Output Was Used:
+         * - Used some of the AI output as reference to screen grab the combobox element as seen below
+         */
+
+        // combobox is input that allows selection from a list of options
         const selects = screen.getAllByRole("combobox");
         fireEvent.change(selects[0], { target: { value: "Delivered" } });
 
