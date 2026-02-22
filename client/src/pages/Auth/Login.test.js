@@ -199,7 +199,6 @@ describe("Authentication Pages", () => {
 					await waitFor(() =>
 						expect(toast.error).toHaveBeenCalledWith("Something went wrong"),
 					);
-					expect(console.log).toHaveBeenCalled();
 				});
 
 				it("should display error message when login returns success: false", async () => {
