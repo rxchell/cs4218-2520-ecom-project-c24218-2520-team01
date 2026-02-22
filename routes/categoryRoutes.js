@@ -8,6 +8,8 @@ import {
   updateCategoryController,
 } from "./../controllers/categoryController.js";
 
+// For the whole file: Bugs fixed by Nicholas Cheng, A0269648H
+
 const router = express.Router();
 
 //routes
