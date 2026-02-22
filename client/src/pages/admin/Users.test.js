@@ -77,8 +77,6 @@ describe("Tests for Users page", () => {
         // Arrange
         axios.get.mockRejectedValueOnce(new Error("network Error"));
 
-        const consoleSpy = jest.spyOn(console, "log").mockImplementation(() => { });
-
         // Act
         render(<Users />);
 
@@ -90,9 +88,9 @@ describe("Tests for Users page", () => {
         expect(axios.get).toHaveBeenCalledTimes(1);
         expect(axios.get).toHaveBeenCalledWith("/api/v1/user/all-users");
 
-        expect(consoleSpy).toHaveBeenCalledWith(new Error("network Error"));
-
-        consoleSpy.mockRestore();
+        // still renders but no user cards (h5 heading)
+        expect(screen.queryAllByRole("heading", { level: 5 })).toHaveLength(0);
+        expect(screen.getByRole("heading", { name: /all users/i })).toBeInTheDocument();
     });
 
     test("renders user details returned from API", async () => {
@@ -119,7 +117,7 @@ describe("Tests for Users page", () => {
         // Act
         render(<Users />);
 
-        // Loading disappears
+        // loading disappears
         await waitFor(() => {
             expect(screen.queryByText(/loading\.\.\./i)).not.toBeInTheDocument();
         });
@@ -130,11 +128,11 @@ describe("Tests for Users page", () => {
         expect(screen.getByText("Normal Person")).toBeInTheDocument();
         expect(screen.getByText("user@test.com")).toBeInTheDocument();
 
-        // Roles
+        // role
         expect(screen.getByText("Admin")).toBeInTheDocument();
         expect(screen.getByText("User")).toBeInTheDocument();
 
-        // Phone Number
+        // phone number
         expect(screen.getByText("123456789")).toBeInTheDocument();
     });
 
@@ -154,7 +152,7 @@ describe("Tests for Users page", () => {
         // Act
         render(<Users />);
 
-        // Loading disappears
+        // loading disappears
         await waitFor(() => {
             expect(screen.queryByText(/loading\.\.\./i)).not.toBeInTheDocument();
         });
@@ -163,7 +161,7 @@ describe("Tests for Users page", () => {
         expect(screen.getByText("name1")).toBeInTheDocument();
         expect(screen.getByText("name1@test.com")).toBeInTheDocument();
 
-        // Role should not exist
+        // role should not exist
         expect(screen.queryByText("Admin")).not.toBeInTheDocument();
         expect(screen.queryByText("User")).not.toBeInTheDocument();
     });
