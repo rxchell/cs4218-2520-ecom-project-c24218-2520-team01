@@ -47,6 +47,27 @@ describe("Orders CRUD operations", () => {
                     { _id: "2", buyer: "1", products: [], payment: {}, status: "Shipped" },
                 ];
 
+                /**
+                 * AI Usage Declaration
+                 * 
+                 * Too Used: Gemini 3.0 Pro
+                 * 
+                 * Prompt: How can I mock method chaining in jest for mongoose query that uses .populate().populate()
+                 * 
+                 * Response: const mockChainFunction = {
+                 *     populate: jest.fn().mockReturnThis(),
+                 *     then: function (resolve) {
+                 *         resolve(mockOrdersList);
+                 *     }
+                 * };
+                 * 
+                 * How the AI output was used:
+                 * - I was not sure how to mock the method chaining of .populate() and also ensure
+                 * that I can track that the arguments that were passed into the function were correct.
+                 * So I used the given code to help me with this particular mocking of Mongoose functions,
+                 * since one of the .populate() function returns another function while the 2nd .populate()
+                 * function returns the actual data.
+                 */
                 // Handle the chaining of the populate function
                 const mockChainFunction = {
                     populate: jest.fn().mockReturnThis(),
@@ -76,6 +97,27 @@ describe("Orders CRUD operations", () => {
 
                 const mockOrdersList = [];
 
+                /**
+                 * AI Usage Declaration
+                 * 
+                 * Too Used: Gemini 3.0 Pro
+                 * 
+                 * Prompt: How can I mock method chaining in jest for mongoose query that uses .populate().populate()
+                 * 
+                 * Response: const mockChainFunction = {
+                 *     populate: jest.fn().mockReturnThis(),
+                 *     then: function (resolve) {
+                 *         resolve(mockOrdersList);
+                 *     }
+                 * };
+                 * 
+                 * How the AI output was used:
+                 * - I was not sure how to mock the method chaining of .populate() and also ensure
+                 * that I can track that the arguments that were passed into the function were correct.
+                 * So I used the given code to help me with this particular mocking of Mongoose functions,
+                 * since one of the .populate() function returns another function while the 2nd .populate()
+                 * function returns the actual data.
+                 */
                 const mockChainFunction = {
                     populate: jest.fn().mockReturnThis(),
                     then: function (resolve) {
