@@ -867,99 +867,100 @@ describe("testController", () => {
         });
     });
 
-    // Lim Jia Wei, A0277381W
+});
 
-    // Mock userModel
-    jest.mock("../models/userModel.js")
+// Lim Jia Wei, A0277381W
 
-    describe("Tests for getUsersController", () => {
+// Mock userModel
+jest.mock("../models/userModel.js")
 
-        let request;
-        let response;
+describe("Tests for getUsersController", () => {
 
-        const mockUsers = [
-            {
-                name: "admin",
-                email: "admin@test.com",
-                phone: "123456789",
-            },
-            {
-                name: "user",
-                email: "user@test.com",
-                phone: "123456789",
-            },
-        ];
+    let request;
+    let response;
 
-        beforeEach(() => {
-            request = {};
-            response = {
-                status: jest.fn().mockReturnThis(),
-                send: jest.fn(),
-            };
-        })
+    const mockUsers = [
+        {
+            name: "admin",
+            email: "admin@test.com",
+            phone: "123456789",
+        },
+        {
+            name: "user",
+            email: "user@test.com",
+            phone: "123456789",
+        },
+    ];
 
-        afterEach(() => {
-            jest.clearAllMocks();
+    beforeEach(() => {
+        request = {};
+        response = {
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn(),
+        };
+    })
+
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
+    test("returns 200 after fetching users successfully", async () => {
+
+        // Arrange
+        userModel.find.mockResolvedValue(mockUsers);
+
+        // Act
+        await getUsersController(request, response);
+
+        // Assert
+        expect(response.status).toHaveBeenCalledWith(200);
+        expect(response.send).toHaveBeenCalledWith({
+            success: true,
+            message: "All users fetched successfully",
+            users: mockUsers,
         });
-
-        test("returns 200 after fetching users successfully", async () => {
-
-            // Arrange
-            userModel.find.mockResolvedValue(mockUsers);
-
-            // Act
-            await getUsersController(request, response);
-
-            // Assert
-            expect(response.status).toHaveBeenCalledWith(200);
-            expect(response.send).toHaveBeenCalledWith({
-                success: true,
-                message: "All users fetched successfully",
-                users: mockUsers,
-            });
-            expect(userModel.find).toHaveBeenCalledWith({});
-
-        });
-
-        test("returns 500 after fetching users failed", async () => {
-
-            // Arrange
-            userModel.find.mockRejectedValue(mockUsers);
-
-            // Act
-            await getUsersController(request, response);
-
-            // Assert
-            expect(response.status).toHaveBeenCalledWith(500);
-            expect(response.send).toHaveBeenCalledWith({
-                success: false,
-                message: "Error in getting all users",
-                error: mockUsers,
-            });
-            expect(userModel.find).toHaveBeenCalledWith({});
-
-        });
-
-        test("returns 200 when no users exist", async () => {
-
-            // Arrange
-            const mockUsers = [];
-
-            userModel.find.mockResolvedValue(mockUsers);
-
-            // Act
-            await getUsersController(request, response);
-
-            // Assert
-            expect(response.status).toHaveBeenCalledWith(200);
-            expect(response.send).toHaveBeenCalledWith({
-                success: true,
-                message: "All users fetched successfully",
-                users: mockUsers,
-            });
-            expect(userModel.find).toHaveBeenCalledWith({});
-
-        });
+        expect(userModel.find).toHaveBeenCalledWith({});
 
     });
+
+    test("returns 500 after fetching users failed", async () => {
+
+        // Arrange
+        userModel.find.mockRejectedValue(mockUsers);
+
+        // Act
+        await getUsersController(request, response);
+
+        // Assert
+        expect(response.status).toHaveBeenCalledWith(500);
+        expect(response.send).toHaveBeenCalledWith({
+            success: false,
+            message: "Error in getting all users",
+            error: mockUsers,
+        });
+        expect(userModel.find).toHaveBeenCalledWith({});
+
+    });
+
+    test("returns 200 when no users exist", async () => {
+
+        // Arrange
+        const mockUsers = [];
+
+        userModel.find.mockResolvedValue(mockUsers);
+
+        // Act
+        await getUsersController(request, response);
+
+        // Assert
+        expect(response.status).toHaveBeenCalledWith(200);
+        expect(response.send).toHaveBeenCalledWith({
+            success: true,
+            message: "All users fetched successfully",
+            users: mockUsers,
+        });
+        expect(userModel.find).toHaveBeenCalledWith({});
+
+    });
+
 });
