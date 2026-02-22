@@ -1,23 +1,28 @@
-import { hashPassword } from "../helpers/authHelper";
-import userModel from "../models/userModel";
-import { MOCK_USER, UPDATED_PROFILE_INPUT, UPDATED_USER } from "../test/fixtures/mockUser";
-import { updateProfileController } from "./authController";
+import {
+    MOCK_USER,
+    UPDATED_PROFILE_INPUT,
+    UPDATED_USER,
+} from "../client/test/fixtures/mockUser.js";
+import { hashPassword } from "../helpers/authHelper.js";
+import userModel from "../models/userModel.js";
+import { updateProfileController } from "./authController.js";
 
 // Rachel Tai Ke Jia, A0258603A
 
 // Mock external dependencies: authHelper and userModel
-jest.mock("../helpers/authHelper", () => (
-    {
-        hashPassword: jest.fn()
-    }
-));
+jest.mock("../helpers/authHelper.js", () => ({
+    __esModule: true,
+    hashPassword: jest.fn(),
+    comparePassword: jest.fn(),
+}));
 
-jest.mock("../models/userModel", () => (
-    {
+jest.mock("../models/userModel.js", () => ({
+    __esModule: true,
+    default: {
         findById: jest.fn(),
-        findByIdAndUpdate: jest.fn()
-    }
-));
+        findByIdAndUpdate: jest.fn(),
+    },
+}));
 
 describe("Unit test for updateProfileController", () => {
     // Arrange

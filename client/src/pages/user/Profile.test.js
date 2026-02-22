@@ -3,7 +3,7 @@ import { render, fireEvent, waitFor } from "@testing-library/react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useAuth } from "../../context/auth";
-import { MOCK_USER, UPDATED_PROFILE_INPUT } from "../../../../test/fixtures/mockUser";
+import { MOCK_USER, UPDATED_PROFILE_INPUT } from "../../../test/fixtures/mockUser";
 import Profile from "./Profile";
 
 // Rachel Tai Ke Jia, A0258603A
