@@ -650,7 +650,7 @@ describe("Category CRUD operations", () => {
         });
 
         describe("Validation error when deleting a category", () => {
-            test("Return 404 when category with id value cannot be found", async () => {
+            test("Return 404 when category id value cannot be found", async () => {
                 /**
                  * Assumption: Return a 404 to alert the user that the category cannot be found.
                  * This will have the same effect as if the id value is a empty string.
