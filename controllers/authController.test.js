@@ -1,6 +1,3 @@
-import userModel from "../models/userModel.js";
-import { getUsersController } from "./authController.js";
-
 // Mock dependencies before imports
 jest.mock("../models/userModel.js");
 jest.mock("jsonwebtoken");
@@ -870,6 +867,9 @@ describe("testController", () => {
 });
 
 // Lim Jia Wei, A0277381W
+
+import userModel from "../models/userModel.js";
+import { getUsersController } from "./authController.js";
 
 // Mock userModel
 jest.mock("../models/userModel.js")
