@@ -16,6 +16,11 @@ const renderMenu = (initialPath = "/") =>
 
 describe("Tests for Admin Menu component", () => {
 
+    beforeEach(() => {
+        jest.clearAllMocks();
+        jest.spyOn(console, "log").mockImplementation(() => { });
+    });
+
     test("renders Admin Panel title", () => {
 
         // Act

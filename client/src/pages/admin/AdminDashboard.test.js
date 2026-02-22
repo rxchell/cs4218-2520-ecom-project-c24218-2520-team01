@@ -33,6 +33,7 @@ describe("Tests for Admin Dashboard page", () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+        jest.spyOn(console, "log").mockImplementation(() => { });
     });
 
     test("render admin details", () => {

@@ -25,6 +25,7 @@ describe("Tests for Users page", () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+        jest.spyOn(console, "log").mockImplementation(() => { });
     });
 
     test("renders page and shows loading initially", async () => {

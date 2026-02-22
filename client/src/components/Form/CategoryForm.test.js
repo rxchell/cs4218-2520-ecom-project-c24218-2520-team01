@@ -7,6 +7,11 @@ import "@testing-library/jest-dom";
 
 describe("Tests for Category Form component", () => {
 
+    beforeEach(() => {
+        jest.clearAllMocks();
+        jest.spyOn(console, "log").mockImplementation(() => { });
+    });
+
     test("renders input field and submit button", () => {
 
         // Arrange
