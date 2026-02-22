@@ -22,8 +22,8 @@ export default {
   // only run these tests
   testMatch: [
   	"<rootDir>/client/src/pages/Auth/*.test.js",
-		"<rootDir>/client/src/context/*.test.js",
-		"<rootDir>/client/src/components/Routes/*.test.js",
+	"<rootDir>/client/src/context/*.test.js",
+	"<rootDir>/client/src/components/Routes/*.test.js",
     "<rootDir>/client/src/components/UserMenu.test.js",
     "<rootDir>/client/src/pages/user/*.test.js",
     "<rootDir>/controllers/*.test.js"
@@ -33,8 +33,8 @@ export default {
   collectCoverage: true,
   collectCoverageFrom: [
     "client/src/pages/Auth/**",
-		"client/src/context/**",
-		"client/src/components/Routes/**",
+	"client/src/context/**",
+	"client/src/components/Routes/**",
     "client/src/components/UserMenu.js",
     "client/src/pages/user/*.js",
     "controllers/*.js"
