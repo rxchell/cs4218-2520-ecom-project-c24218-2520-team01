@@ -1,23 +1,35 @@
-import { hashPassword } from "../helpers/authHelper";
-import userModel from "../models/userModel";
-import { MOCK_USER, UPDATED_PROFILE_INPUT, UPDATED_USER } from "../test/fixtures/mockUser";
-import { updateProfileController } from "./authController";
+import { jest } from "@jest/globals";
+import {
+    MOCK_USER,
+    UPDATED_PROFILE_INPUT,
+    UPDATED_USER,
+} from "../client/test/fixtures/mockUser.js";
 
 // Rachel Tai Ke Jia, A0258603A
 
-// Mock external dependencies: authHelper and userModel
-jest.mock("../helpers/authHelper", () => (
-    {
-        hashPassword: jest.fn()
-    }
-));
+const authHelperMock = {
+    hashPassword: jest.fn(),
+    comparePassword: jest.fn(),
+};
 
-jest.mock("../models/userModel", () => (
-    {
-        findById: jest.fn(),
-        findByIdAndUpdate: jest.fn()
-    }
-));
+const userModelMock = {
+    findById: jest.fn(),
+    findByIdAndUpdate: jest.fn(),
+};
+
+// Mock external dependencies: authHelper and userModel
+jest.unstable_mockModule("../helpers/authHelper.js", () => ({
+    hashPassword: authHelperMock.hashPassword,
+    comparePassword: authHelperMock.comparePassword,
+}));
+
+jest.unstable_mockModule("../models/userModel.js", () => ({
+    default: userModelMock,
+}));
+
+const { hashPassword } = await import("../helpers/authHelper.js");
+const userModel = (await import("../models/userModel.js")).default;
+const { updateProfileController } = await import("./authController.js");
 
 describe("Unit test for updateProfileController", () => {
     // Arrange
