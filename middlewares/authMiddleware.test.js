@@ -206,7 +206,7 @@ describe("Authorization", () => {
 				 * External Reference:
 				 * Parameterized test pattern adapted from: https://stackoverflow.com/questions/52996062/using-jests-test-each-parameterized-test-variable-scope
 				 **/
-				it.each(
+				it.each([
 					{
 						name: "user with role: undefined",
 						user: { _id: "6767", role: undefined },
@@ -227,7 +227,7 @@ describe("Authorization", () => {
 						user: { _id: "6767", role: 2 },
 						expectedUnauthorized: true,
 					},
-				)(
+				])(
 					"should return 401 for $name",
 					async ({ user, expectedUnauthorized }) => {
 						// Arrange
