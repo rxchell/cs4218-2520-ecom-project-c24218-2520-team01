@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
+// Bugs fixed by Nicholas Cheng, A0269648H
+
 export default function useCategory() {
   const [categories, setCategories] = useState([]);
 
