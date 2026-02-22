@@ -54,6 +54,7 @@ describe("Tests for Products page", () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+        jest.spyOn(console, "log").mockImplementation(() => { });
     });
 
     const setupProductsMock = () => {

@@ -88,6 +88,7 @@ describe("Tests for Create Category page", () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+        jest.spyOn(console, "log").mockImplementation(() => { });
     });
 
     const setupCategoryMocks = () => {

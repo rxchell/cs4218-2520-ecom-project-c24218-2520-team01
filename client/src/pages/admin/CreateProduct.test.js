@@ -29,6 +29,17 @@ jest.mock("./../../components/Layout", () => ({ children }) => (
     <div data-testid="layout">{children}</div>
 ));
 
+/**
+ * AI Usage Declaration
+ *
+ * Tool Used: ChatGPT 5.2
+ *
+ * Prompt: How do I mock react-router-dom for my unit tests?
+ *
+ * How the AI Output Was Used:
+ * - Used the AI output as a reference to create react-router-dom as seen below
+*/
+
 // Mock react-router-dom
 const mockNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
@@ -86,6 +97,7 @@ describe("Tests for Create Product page", () => {
     beforeEach(() => {
         jest.clearAllMocks();
         global.URL.createObjectURL.mockReturnValue("mock-url");
+        jest.spyOn(console, "log").mockImplementation(() => { });
     });
 
     // For axios mocking

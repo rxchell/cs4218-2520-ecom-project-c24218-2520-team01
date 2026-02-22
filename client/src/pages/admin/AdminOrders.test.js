@@ -90,6 +90,7 @@ describe("Tests for Admin Orders page", () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+        jest.spyOn(console, "log").mockImplementation(() => { });
     });
 
     const setupAdminOrdersMock = () => {
