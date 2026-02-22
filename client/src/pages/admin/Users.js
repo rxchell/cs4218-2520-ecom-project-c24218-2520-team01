@@ -4,8 +4,6 @@ import AdminMenu from '../../components/AdminMenu';
 import axios from "axios";
 import { useState, useEffect } from 'react';
 
-// Lim Jia Wei, A0277381W
-
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
