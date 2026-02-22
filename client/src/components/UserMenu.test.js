@@ -14,7 +14,7 @@ const renderUserMenu = () =>
     );
 
 describe("Unit test for UserMenu component", () => {
-    test("UserMenu shows shows h4 text", () => {
+    test("UserMenu shows h4 text", () => {
         // Act
         renderUserMenu();
 
