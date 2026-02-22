@@ -130,12 +130,23 @@ export const productPhotoController = async (req, res) => {
         const product = await productModel
             .findById(req.params.pid)
             .select("photo");
+
+        if (!product) {
+            return res.status(404).send({
+                success: false,
+                message: "Product not found",
+            });
+        }
         if (product.photo.data) {
             res.set("Content-type", product.photo.contentType);
             return res.status(200).send(product.photo.data);
+        } else {
+            return res.status(404).send({
+                success: false,
+                message: "No photo available",
+            });
         }
     } catch (error) {
-        console.log(error);
         res.status(500).send({
             success: false,
             message: "Error while getting photo",
@@ -192,7 +203,7 @@ export const deleteProductController = async (req, res) => {
     }
 };
 
-//upate producta
+//update products
 export const updateProductController = async (req, res) => {
     try {
         const { pid } = req.params;

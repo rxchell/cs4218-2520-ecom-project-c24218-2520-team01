@@ -226,7 +226,7 @@ describe("Product CRUD", () => {
         });
 
         describe("Successful", () => {
-            test("returns 200 when pid exists and deletes", async () => {
+            test("returns 200 when pid exists and deletes product", async () => {
                 req = {
                     params: {
                         pid: "60d5ecb54b24a10015f1e3d1",
@@ -708,6 +708,40 @@ describe("Product CRUD", () => {
                         success: false,
                         message: "Error while getting photo",
                         error,
+                    });
+                });
+            });
+            describe("Validation error", () => {
+                test("returns 404 when there is a no product", async () => {
+                    productModel.findById.mockReturnValue({
+                        select: jest.fn().mockResolvedValue(null),
+                    });
+
+                    await productPhotoController(req, res);
+
+                    expect(res.status).toHaveBeenCalledWith(404);
+                    expect(res.send).toHaveBeenCalledWith({
+                        success: false,
+                        message: "Product not found",
+                    });
+                });
+
+                test("returns 404 when there is a no photo", async () => {
+                    productModel.findById.mockReturnValue({
+                        select: jest.fn().mockResolvedValue({
+                            photo: {
+                                data: null,
+                                contentType: null,
+                            },
+                        }),
+                    });
+
+                    await productPhotoController(req, res);
+
+                    expect(res.status).toHaveBeenCalledWith(404);
+                    expect(res.send).toHaveBeenCalledWith({
+                        success: false,
+                        message: "No photo available",
                     });
                 });
             });
