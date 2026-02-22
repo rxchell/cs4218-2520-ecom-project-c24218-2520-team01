@@ -37,7 +37,10 @@ export default {
     "client/src/context/**",
     "client/src/components/Routes/**",
     "client/src/components/UserMenu.js",
-    "client/src/pages/user/*.js"
+    "client/src/components/AdminMenu.js",
+    "client/src/components/Form/CategoryForm.js",
+    "client/src/pages/user/*.js",
+    "client/src/pages/admin/*.js",
   ],
   coverageThreshold: {
     global: {
